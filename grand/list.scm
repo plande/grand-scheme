@@ -40,6 +40,7 @@
 	    list<-values
 	    weave
 	    intersperse
+	    chunks
 	    )
   #:re-export (every
 	       any
@@ -398,7 +399,6 @@
  (weave '(a b c) '(1 2 3) '(X Y Z))
  ===> (a 1 X b 2 Y c 3 Z))
 
-
 (define (intersperse item #;into list)
   (match list
     (()
@@ -411,3 +411,12 @@
 (e.g.
  (intersperse '+ #;into '(1 2 3))
  ===> (1 + 2 + 3))
+
+(define (chunks #;of l #;of-length n)
+  (if (null? l)
+      '()
+      (let ((prefix rest (split-at l n)))
+	`(,prefix . ,(chunks rest n)))))
+
+(e.g.
+ (chunks '(1 2 3 4 5 6) 3) ===> ((1 2 3) (4 5 6)))

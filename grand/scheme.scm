@@ -1,4 +1,4 @@
-(define-module (grand-scheme)
+(define-module (grand scheme)
   #:use-module (grand syntax)
   #:use-module (grand examples)
   #:use-module (grand expand)
@@ -91,6 +91,7 @@
 	       first second third fourth fifth
 	       intersperse
 	       weave
+	       chunks
 	       publish
 	       natural?
 	       let let* lambda define and-let*
