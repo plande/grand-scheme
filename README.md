@@ -170,8 +170,8 @@ and `lambda`, for example,
 expands to
 ```
 (define f
-  (lambda (y)
-    (lambda (x)
+  (lambda (x)
+    (lambda (y)
       (+ x y))))
 ```
 - it provides a pattern-matching version of the `and-let*`
