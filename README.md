@@ -116,10 +116,6 @@ to use Scheme in the way I like -- and I hope you'll like it too.
 But rather than relying solely on my personal taste, I try to conform
 to a set of rules that make working with the language easier.
 
-For example, all the functions that are defined here are pure.
-Side effects, if they appear, are used scarcely, and in every
-case are encapsulated with macros.
-
 The rules are:
 - functions should be pure
 - language constructs that cause side-effects should be encapsulated
