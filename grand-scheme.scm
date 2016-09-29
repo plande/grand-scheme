@@ -1,4 +1,4 @@
-(define-module (grand)
+(define-module (grand-scheme)
   #:use-module (grand syntax)
   #:use-module (grand examples)
   #:use-module (grand expand)
