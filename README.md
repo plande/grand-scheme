@@ -143,10 +143,10 @@ R6RS module system. I hope to change this one day to make the
 library more portable, but for now I have some more urgent
 things to do.
 
-## The `(grand)` meta-module
+## The `(grand scheme)` meta-module
 
-The `(grand)` module is a meta-module that re-exports
-all the bindings that are contained in the `grand` directory.
+The `(grand scheme)` module is a meta-module that re-exports
+other modules that are contained in the `grand` directory.
 Some interesting ones are:
 ```
 (grand examples)
