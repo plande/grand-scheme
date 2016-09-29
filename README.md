@@ -139,7 +139,6 @@ to `cond`, if the patterns are simple
 ```
 In this way, I find it easier to memoize the order (or role) of arguments
 to functions.
-- the code must not excede 80 columns
 
 The library is intended primarily for Guile Scheme, because this
 is the implementation that I've been using most often. For that
@@ -148,19 +147,62 @@ R6RS module system. I hope to change this one day to make the
 library more portable, but for now I have some more urgent
 things to do.
 
-## The `(ice-9 nice-9)` language
+## The `(grand)` meta-module
 
-The `(ice-9 nice-9)` module extends some of the core bindings
-of Scheme, in the following way:
-- it allows to perform destructured binding with the `let`, `let*`
-and `lambda`, for example,
+The `(grand)` module is a meta-module that re-exports
+all the bindings that are contained in the `grand` directory.
+Some interesting ones are:
 ```
-(map (lambda ((a . b)) (+ a b)) '((1 . 2) (3 . 4)(5 . 6)))
+(grand examples)
+(grand syntax)
+(grand publishing)
+(grand list)
+(grand define-partial)
+```
+
+## The `(grand examples)` module
+
+The `(grand examples)` module defines a special `e.g.` form
+that is used in other modules or programs to embed examples.
+For example, given the above definition of `unfold-left-until`,
+one could write an example usage for the purpose of clarification:
+```
+(e.g.
+  (unfold-left-until (lambda (x) (> x 10)) 1+ 0)
+  ===> (0 1 2 3 4 5 6 7 8 9 10))
+```
+If the value of expression is not `equal?` to the
+value on the right of the `===>` symbol, an error
+is raised.
+
+The `e.g.` form supports multiple values:
+```
+(e.g. (values 1 2 3) ===> 1 2 3)
+```
+
+If a single expression is provided to the `e.g.` form, without
+the `===>` symbol nor purported value(s), an error is rased
+if the expression evaluates to `#false`
+```
+(e.g. (and (even? 2) (odd? 2))) ;; raises an error
+```
+
+## The `(grand syntax)` module
+
+The `(grand syntax)` module, formerly [known](https://lists.gnu.org/archive/html/guile-user/2015-09/msg00009.html)
+as `(ice-9 nice-9)`, extends some of the core bindings of Scheme, in the following way:
+- it allows to perform destructured binding with the `let`, `let*`
+and `lambda`,
+```
+(e.g.
+  (map (lambda ((a . b)) (+ a b)) '((1 . 2) (3 . 4)(5 . 6)))
+  ===> (3 7 11))
 ```
 - it allows the `let*` form to capture multiple values
 ```
-(let* ((a b (values 1 2)))
-  (+ a b))
+(e.g.
+  (let* ((a b (values 1 2)))
+    (+ a b)) ===> 3)
 ```
 - it allows for curried definitions, for example
 ```
@@ -176,13 +218,9 @@ expands to
 ```
 - it provides a pattern-matching version of the `and-let*`
 form, which can also capture multiple values. If a
-pattern fails to match, `and-let*` evaluates to false.
+pattern fails to match, `and-let*` evaluates to `#false`.
 - allows to omit `syntax-rules` when using `define-syntax`,
 `let-syntax` and `letrec-syntax` in particular ways
 - re-exports the `match` syntax from `(ice-9 match)` library,
 so that the latter doesn't need to be imported.
 
-## The `(grand)` module
-
-The `(grand)` module is a meta-module that re-exports
-all the bindings that are contained in the `grand` directory.
