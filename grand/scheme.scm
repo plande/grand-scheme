@@ -34,7 +34,11 @@
 	       fold-left
 	       fold-right
 	       unfold-left
+	       unfold-left-upto
+	       unfold-left-until
 	       unfold-right
+	       unfold-right-upto
+	       unfold-right-until
 	       scan
 	       prefix-sum
 	       extend-left
