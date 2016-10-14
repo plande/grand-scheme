@@ -7,11 +7,14 @@
 	    clip
 	    pass
 	    compose/values
+	    iterations
 	    partial
 	    maybe
 	    either
 	    neither
-	    both))
+	    both
+	    is
+	    isn't))
 
 (define (impose-arity n procedure)
   (let ((new-procedure (lambda args (apply procedure args))))
@@ -46,6 +49,13 @@
 	 (lambda vals (apply chains (clip vals (arity chains))))))))
   (let ((composer (reduce make-chain values fns)))
     composer))
+
+(define (iterations n f)
+  (apply compose (make-list n f)))
+
+(e.g.
+ ((iterations 3 1+) 0)
+ ===> 3)
 
 (define (pass object #;to . functions)
   ((apply compose/values (reverse functions)) object))
@@ -88,3 +98,15 @@
 (e.g.
  (and ((both positive? integer?) 5)
       (not ((both positive? integer?) 4.5))))
+
+(define (is . stuff)
+  (match stuff
+    ((x related-to? y)
+     (related-to? x y))
+    ((x related-to? y . likewise)
+     (and (related-to? x y)
+	  (apply is y likewise)))))
+
+(define (isn't . stuff)
+  (not (apply is stuff)))
+

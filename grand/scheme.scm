@@ -13,7 +13,12 @@
   #:use-module (grand string)
   #:use-module (grand symbol)
   #:use-module (grand numbers)
+  #:use-module (grand improper)
+  #:use-module (grand binding)
+  #:use-module (grand matrix)
+  #:use-module (grand guilt)
   #:re-export (e.g.
+	       bind
 	       argmin
 	       argmax
 	       min+max
@@ -90,7 +95,7 @@
 	       split-at
 	       iota
 	       count
-	       first
+	       first last
 	       zip
 	       first second third fourth fifth
 	       intersperse
@@ -101,5 +106,11 @@
 	       let let* lambda define and-let*
 	       define-syntax let-syntax letrec-syntax
 	       match primitive-lambda
+	       is isn't
+	       length. any. every.
+	       iterations
+	       M* M+ det inv dim transpose diag
+	       bind-socket
+	       select-file-descriptors
 	       )
   #:replace ((compose/values . compose)))

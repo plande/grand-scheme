@@ -57,7 +57,7 @@
 	       split-at
 	       iota
 	       count
-	       first
+	       first last
 	       zip
 	       first second third fourth fifth	       
 	       )
@@ -237,7 +237,7 @@
 	(unfold (f seed) `(,seed . ,result))))
   (unfold seed '()))
 
-(define (fold-right-upto n #;using f #;starting-with seed)
+(define (unfold-right-upto n #;using f #;starting-with seed)
   (define (unfold n seed result)
     (if (<= n 0)
 	result
@@ -333,10 +333,9 @@
  ===> (1 2 3 4) (5))
 
 (define (suffix? x y)
-  "is x a suffix of y?"
   (or (equal? x y)
-      (and (pair? y)
-	   (suffix? x (cdr y)))))
+      (and-let* (((h . t) y))
+	(suffix? x t))))
 
 (e.g. (suffix? '(c d e) '(a b c d e)))
 
@@ -349,10 +348,12 @@
  (not (proper-suffix? '(a b c) '(a b c))))
 
 (define (prefix? x y)
-  "is x a prefix of y?"
-  (and (list? x) (list? y)
-       (>= (length y) (length x))
-       (equal? x (take y (length x)))))
+  (or (null? x)
+      (equal? x y)
+      (and-let* (((hx . tx) x)
+		 ((hy . ty) y)
+		 ((equal? hx hy)))
+	(prefix? tx ty))))
 
 (e.g. (prefix? '(a b c) '(a b c d e)))
 
