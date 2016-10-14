@@ -2,7 +2,7 @@
   #:use-module (grand syntax)
   #:use-module (grand list)
   #:use-module (grand examples)
-  #:export (M* M+ det inv dim transpose diag))
+  #:export (M* M+ det inv dim transpose diag zero))
 
 (define (matrix? x)
   (and (list? x)
@@ -105,8 +105,8 @@
        (let (((rows columns) (dim M)))
 	 (= rows columns))))
 
-(define (matrix-ref M row column)
-  (list-ref (list-ref M row) column))
+(define (matrix-ref M . indices)
+  (fold-left list-ref M indices))
 
 (e.g. (matrix-ref '((1 2)
 		    (3 4)) 0 1) ===> 2)
@@ -159,3 +159,15 @@
 	      (4 5 6)
 	      (7 8 9))) ===> (1 5 9))
 
+(define (zero . dimensions)
+  (match dimensions
+    (()
+     0)
+    ((n . rest)
+     (let ((zeros (apply zero rest)))
+       (unfold-right-upto n identity zeros)))))
+
+(e.g.
+ (zero 2 3)
+ ===> ((0 0 0)
+       (0 0 0)))

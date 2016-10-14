@@ -109,7 +109,7 @@
 	       is isn't
 	       length. any. every.
 	       iterations
-	       M* M+ det inv dim transpose diag
+	       M* M+ det inv dim transpose diag zero
 	       bind-socket
 	       select-file-descriptors
 	       )
