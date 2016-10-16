@@ -55,6 +55,8 @@
 	       drop-while
 	       partition
 	       split-at
+	       span
+	       break
 	       iota
 	       count
 	       first last
@@ -206,7 +208,7 @@
 				    #;starting-with (f seed)))))
 
 (define (unfold-left-upto n #;using f #;starting-with seed)
-  (if (<= seed 0)
+  (if (<= n 0)
       '()
       `(,seed . ,(unfold-left-upto (- n 1) #;using f
 				   #;starting-with (f seed)))))

@@ -6,7 +6,9 @@
   #:use-module (grand default-specific)
   #:use-module (grand define-memoized)
   #:use-module (grand define-partial)
+  #:use-module (grand define-keywords)
   #:use-module (grand combinatorics)
+  #:use-module (grand attributes)
   #:use-module (grand set)
   #:use-module (grand list)
   #:use-module (grand function)
@@ -93,6 +95,8 @@
 	       drop-while
 	       partition
 	       split-at
+	       span
+	       break
 	       iota
 	       count
 	       first last
@@ -112,5 +116,13 @@
 	       M* M+ det inv dim transpose diag zero
 	       bind-socket
 	       select-file-descriptors
+	       attribute-ref
+	       attributes?
+	       attributes+children
+	       attributes-children
+	       remove-attributes
+	       merge-attributes
+	       (define/keywords . define*)
 	       )
-  #:replace ((compose/values . compose)))
+  #:replace ((compose/values . compose)
+	     ))
