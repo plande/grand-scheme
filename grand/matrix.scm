@@ -2,7 +2,7 @@
   #:use-module (grand syntax)
   #:use-module (grand list)
   #:use-module (grand examples)
-  #:export (M* M+ det inv dim transpose diag zero))
+  #:export (matrix? M* M+ det inv dim transpose diag zero matrix-ref))
 
 (define (matrix? x)
   (and (list? x)

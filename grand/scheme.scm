@@ -113,7 +113,7 @@
 	       is isn't
 	       length. any. every.
 	       iterations
-	       M* M+ det inv dim transpose diag zero
+	       matrix? M* M+ det inv dim transpose diag zero matrix-ref
 	       bind-socket
 	       select-file-descriptors
 	       attribute-ref

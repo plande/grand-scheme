@@ -9,7 +9,7 @@
                   (compile e #:from 'scheme
                     #:to 'tree-il
                     #:env (current-module))
-                  #:from 'tree-idl
+                  #:from 'tree-il
                   #:to 'scheme
                   #:opts opts)))
     exp))

@@ -4,6 +4,7 @@
   #:use-module (grand examples)
   #:use-module (grand publishing)
   #:export (
+	    unique?
 	    argmin
 	    argmax min+max argmin+argmax
 	    skip
@@ -64,6 +65,12 @@
 	       first second third fourth fifth	       
 	       )
   )
+
+(define (unique? l)
+  (or (null? l)
+      (and-let* (((h . t) l)
+		 ((isn't h member #;of t)))
+	(unique? t))))
 
 (define-syntax list<-values
   (syntax-rules ()
