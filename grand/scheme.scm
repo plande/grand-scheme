@@ -69,6 +69,8 @@
 	       intersection
 	       same-sets?
 	       insertions
+	       prefix-insertions
+	       n-insertions
 	       permutations
 	       take-upto
 	       drop-upto
@@ -113,7 +115,7 @@
 	       is isn't
 	       length. any. every.
 	       iterations
-	       matrix? M* M+ det inv dim transpose diag zero matrix-ref
+	       matrix? M* M+ det inv dim transpose diag zero matrix-ref matrix-column
 	       bind-socket
 	       select-file-descriptors
 	       attribute-ref

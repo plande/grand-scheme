@@ -4,6 +4,8 @@
   #:use-module (grand examples)
   #:export (multicombinations
 	    insertions
+	    prefix-insertions
+	    n-insertions
 	    permutations
 	    subsets
 	    cartesian-product))
@@ -40,6 +42,29 @@
  (insertions 'a '(x y z))
  ===> ((a x y z) (x a y z) (x y a z) (x y z a)))
 
+(define (prefix-insertions x sequences)
+  (append-map (lambda (sequence)
+		(let ((prefix suffix (break (lambda (y) (eq? x y)) sequence)))
+		  (map (lambda (insertion)
+			 `(,@insertion ,@suffix))
+		       (insertions x prefix))))
+	      sequences))
+
+(e.g.
+ (prefix-insertions 'x (insertions 'x '(a b c)))
+ ===> ((x x a b c) (x a x b c) (a x x b c) (x a b x c) (a x b x c)
+       (a b x x c) (x a b c x) (a x b c x) (a b x c x) (a b c x x)))
+
+(define (n-insertions n x sequences)
+  (if (= n 0)
+      sequences
+      (n-insertions (- n 1) x (prefix-insertions x sequences))))
+
+(e.g.
+ (n-insertions 2 'x '((a b c)))
+ ===> ((x x a b c) (x a x b c) (a x x b c) (x a b x c) (a x b x c)
+       (a b x x c) (x a b c x) (a x b c x) (a b x c x) (a b c x x)))
+ 
 (define (permutations l)
   (match l
     (()
