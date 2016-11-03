@@ -51,7 +51,7 @@
     composer))
 
 (define (iterations n f)
-  (apply compose (make-list n f)))
+  (apply compose/values (make-list n f)))
 
 (e.g.
  ((iterations 3 1+) 0)
@@ -99,14 +99,12 @@
  (and ((both positive? integer?) 5)
       (not ((both positive? integer?) 4.5))))
 
-(define (is . stuff)
-  (match stuff
-    ((x related-to? y)
-     (related-to? x y))
-    ((x related-to? y . likewise)
-     (and (related-to? x y)
-	  (apply is y likewise)))))
+(define-syntax is ()
+  ((_ x related-to? y)
+   (related-to? x y))
+  ((_ x related-to? y . likewise)
+   (and (is x related-to? y)
+	(is y . likewise))))
 
-(define (isn't . stuff)
-  (not (apply is stuff)))
-
+(define-syntax (isn't . stuff)
+  (not (is . stuff)))
