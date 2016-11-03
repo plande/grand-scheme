@@ -54,6 +54,7 @@
 	       indexed
 	       multicombinations
 	       cartesian-product
+	       cartesian-power
 	       map/values
 	       map-n
 	       prefix?

@@ -8,7 +8,8 @@
 	    n-insertions
 	    permutations
 	    subsets
-	    cartesian-product))
+	    cartesian-product
+	    cartesian-power))
 
 (define (multicombinations #;from-set A #;of-length n)
   #;(assert (not (contains-duplicates? A)))
@@ -57,7 +58,6 @@
 
 (define (n-insertions n x sequences)
   (if (= n 0)
-      sequences
       (n-insertions (- n 1) x (prefix-insertions x sequences))))
 
 (e.g.
@@ -78,19 +78,17 @@
  (permutations '(a b c))
  ===> ((a b c) (b a c) (b c a) (a c b) (c a b) (c b a)))
 
-
 (define (subsets l n)
-  (cond
-   ((= n 0) '())
-   ((= n 1) (map list l))
-   ((> n 1)
-    (match l
-      (() '())
-      ((first . rest)
-       (append (map (lambda (next) 
+  (cond ((= n 0)
+	 '(()))
+	((null? l)
+	 '())
+	(else
+	 (let (((first . rest) l))
+	   `(,@(map (lambda (next)
 		      `(,first . ,next))
-		    (subsets rest (1- n)))
-	       (subsets rest n)))))))
+		    (subsets rest (- n 1)))
+	     ,@(subsets rest n))))))
 
 (e.g. (subsets '(a b c) 2) ===> ((a b) (a c) (b c)))
 
@@ -108,3 +106,6 @@
  (cartesian-product '(a b) '(1 2 3) '(X Y))
  ===> ((a 1 X) (b 1 X) (a 2 X) (b 2 X) (a 3 X) (b 3 X) 
        (a 1 Y) (b 1 Y) (a 2 Y) (b 2 Y) (a 3 Y) (b 3 Y)))
+
+(define (cartesian-power list n)
+  (apply cartesian-product (make-list n list)))
