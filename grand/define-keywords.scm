@@ -7,6 +7,9 @@
 (define-syntax define/keywords
   (lambda (x)
 
+    (define (syntax* datum)
+      (datum->syntax x datum))
+    
     (define* (required args #:optional (gathered '()))
       (match args
 	(((? symbol?) #:= . _)
@@ -37,25 +40,31 @@
 	     (optional args** (optional args*))
 	     (keyword rest (keyword args**))
 	     (((names values keys) ...) keyword))
-	(datum->syntax x `(,required ,optional ,keyword ,rest ,keys))))
+	(syntax*
+	 `(,required
+	   ,(if (null? optional)
+		'()
+		`(#:optional ,@optional))
+	   ,(if (null? keyword)
+		'()
+		`(#:key ,@keyword #:allow-other-keys))
+	   ,rest
+	   ,keys))))
 
     (syntax-case x ()
 
       ((_ (proc args ...) body ...)
+       ; no "rest" arguments
        (with-syntax ((((required ...) (optional ...) (keyword ...) () keys)
 		      (required+optional+keyword+rest+keys #'(args ...))))
 	 #'(define proc
-	     (lambda* (required ... #:optional optional ...
-				#:key keyword ...
-				#:allow-other-keys)
+	     (lambda* (required ... optional ... keyword ...)
 	       body ...))))
 
       ((_ (proc . args) body ...)
        (with-syntax ((((required ...) (optional ...) (keyword ...) rest keys)
 		      (required+optional+keyword+rest+keys #'args)))
 	 #'(define proc
-	     (lambda* (required ... #:optional optional ...
-				#:key keyword ...
-				#:allow-other-keys . rest)
+	     (lambda* (required ... optional ... keyword ... . rest)
 	       (let ((rest (remove-attributes 'keys rest)))
 		 body ...))))))))
