@@ -31,7 +31,7 @@
 			   n)))
 
 (e.g. 
- ((digits/base 2) 4) ===> '(1 0 0))
+ ((digits/base 2) 4) ===> (1 0 0))
 
 (e.g.
- ((digits/base 10) 140) ===> '(1 4 0))
+ ((digits/base 10) 140) ===> (1 4 0))
