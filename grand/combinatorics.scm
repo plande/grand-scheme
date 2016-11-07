@@ -58,6 +58,7 @@
 
 (define (n-insertions n x sequences)
   (if (= n 0)
+      sequences
       (n-insertions (- n 1) x (prefix-insertions x sequences))))
 
 (e.g.
