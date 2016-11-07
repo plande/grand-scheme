@@ -110,6 +110,8 @@
 	       chunks
 	       publish
 	       natural?
+	       number/base
+	       digits/base
 	       let let* lambda define and-let*
 	       define-syntax let-syntax letrec-syntax
 	       match primitive-lambda
