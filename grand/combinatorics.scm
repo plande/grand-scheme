@@ -1,15 +1,20 @@
 (define-module (grand combinatorics)
   #:use-module (srfi srfi-1)
   #:use-module (grand syntax)
+  #:use-module (grand list)
   #:use-module (grand examples)
+  #:use-module (grand function)
   #:export (multicombinations
 	    insertions
 	    prefix-insertions
 	    n-insertions
 	    permutations
 	    subsets
+	    set-partitions
 	    cartesian-product
-	    cartesian-power))
+	    cartesian-power
+	    number-compositions
+	    number-partitions))
 
 (define (multicombinations #;from-set A #;of-length n)
   #;(assert (not (contains-duplicates? A)))
@@ -93,6 +98,33 @@
 
 (e.g. (subsets '(a b c) 2) ===> ((a b) (a c) (b c)))
 
+(define (set-partition-insertions item #;into partitions)
+  (append-map (lambda (partition)
+		(map (lambda (n)
+		       (alter n partition `(,item . ,(list-ref partition n))))
+		     (iota (length partition))))
+	      partitions))
+
+(e.g.
+ (set-partition-insertions 'x '(((a b) (c)) ((a) (b c))))
+ ===> (((x a b) (c)) ((a b) (x c)) ((x a) (b c)) ((a) (x b c))))
+
+(define (set-partitions l k)
+  (cond ((null? l)
+	 '())
+	((= (length l) k)
+	 `(,(map list l)))
+	(else
+	 (let (((h . t) l))
+	   `(,@(map (lambda (subpartition)
+		      `((,h) . ,subpartition))
+		    (set-partitions t (- k 1)))
+	     ,@(set-partition-insertions h (set-partitions t k)))))))
+
+(e.g.
+ (set-partitions '(a b c) 2)
+ ===> (((a) (b c)) ((a b) (c)) ((b) (a c))))
+
 (define (cartesian-product . lists)
   (match lists
     (() '())
@@ -110,3 +142,28 @@
 
 (define (cartesian-power list n)
   (apply cartesian-product (make-list n list)))
+
+(define (number-compositions n k)
+  (cond ((or (is n < k) (is k < 0))
+	 '())
+	((= n k 0)
+	 '(()))
+	(else
+	 (append-map (lambda (i)
+		       (map (lambda (completions)
+			      `(,(- n i) . ,completions))
+			    (number-compositions i (- k 1))))
+		     (iota n)))))
+
+(define (number-partitions n k)
+  (cond ((or (is n < k) (is k < 0))
+	 '())
+	((= n k 0)
+	 '(()))
+	(else
+	 (append-map (lambda (i)
+		       (filter-map (lambda (completions)
+				     (and (isn't (- n i) < k <= i)
+					  `(,(- n i) . ,completions)))
+			    (number-partitions i (- k 1))))
+		     (iota n)))))

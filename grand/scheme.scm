@@ -34,6 +34,9 @@
 	       rest
 	       equivalence-classes
 	       subsets
+	       set-partitions
+	       number-partitions
+	       number-compositions
 	       number->symbol
 	       ->string
 	       sum
