@@ -19,7 +19,10 @@
   #:use-module (grand binding)
   #:use-module (grand matrix)
   #:use-module (grand guilt)
+  #:use-module (grand reading)
+  #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
+	       pretty-print
 	       bind
 	       argmin
 	       argmax
@@ -121,7 +124,8 @@
 	       is isn't
 	       length. any. every.
 	       iterations
-	       matrix? M* M+ det inv dim transpose diag zero matrix-ref matrix-column
+	       matrix? M* M+ det inv dim transpose diag
+	       zero matrix-ref matrix-column
 	       bind-socket
 	       select-file-descriptors
 	       attribute-ref
@@ -131,6 +135,11 @@
 	       remove-attributes
 	       merge-attributes
 	       (define/keywords . define*)
+	       read-s-expressions
+	       read-file
+	       read-lines
+	       read-line
+	       read-delimited
 	       )
   #:replace ((compose/values . compose)
 	     ))
