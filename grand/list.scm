@@ -69,7 +69,7 @@
 (define (unique? l)
   (or (null? l)
       (and-let* (((h . t) l)
-		 ((isn't h member #;of t)))
+		 (not (member h t)))
 	(unique? t))))
 
 (define-syntax list<-values
