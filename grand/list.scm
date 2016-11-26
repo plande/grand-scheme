@@ -11,7 +11,6 @@
 	    alter
 	    generate-list
 	    fold-left
-	    fold-right
 	    unfold-left
 	    unfold-left-upto
 	    unfold-left-until
@@ -62,7 +61,8 @@
 	       count
 	       first last
 	       zip
-	       first second third fourth fifth	       
+	       first second third fourth fifth
+	       fold-right
 	       )
   )
 
@@ -184,12 +184,7 @@
     (_
      e)))
 
-(define (fold-right op e . ls)
-  (match ls
-    (((heads . tails) ...)
-     (apply op (apply fold-right op e tails) heads))
-    (_
-     e)))
+;; the srfi-1 fold-right variant is good, so we'll just re-export it
 
 (define (unfold-left f #;from . seed)
   (call-with-values (lambda () (apply f seed))
