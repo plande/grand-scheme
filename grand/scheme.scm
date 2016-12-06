@@ -140,6 +140,7 @@
 	       read-lines
 	       read-line
 	       read-delimited
+	       expand expand-form
 	       )
   #:replace ((compose/values . compose)
 	     ))
