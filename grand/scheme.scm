@@ -75,6 +75,10 @@
 	       difference
 	       intersection
 	       same-sets?
+	       subset?
+	       set
+	       member?
+	       powerset
 	       insertions
 	       prefix-insertions
 	       n-insertions
@@ -93,6 +97,7 @@
 	       symbol-drop
 	       every
 	       any
+	       none
 	       filter-map
 	       append-map
 	       concatenate
@@ -111,6 +116,7 @@
 	       first last
 	       zip
 	       first second third fourth fifth
+	       delete-duplicates
 	       intersperse
 	       weave
 	       chunks

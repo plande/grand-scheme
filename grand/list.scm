@@ -41,6 +41,7 @@
 	    weave
 	    intersperse
 	    chunks
+	    none
 	    )
   #:re-export (every
 	       any
@@ -63,8 +64,13 @@
 	       zip
 	       first second third fourth fifth
 	       fold-right
+	       delete-duplicates
+	       find-tail
 	       )
   )
+
+(define (none pred . ls)
+  (not (apply any pred ls)))
 
 (define (unique? l)
   (or (null? l)

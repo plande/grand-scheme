@@ -14,7 +14,9 @@
 	    cartesian-product
 	    cartesian-power
 	    number-compositions
-	    number-partitions))
+	    number-partitions
+	    cycles
+	    permute))
 
 (define (multicombinations #;from-set A #;of-length n)
   #;(assert (not (contains-duplicates? A)))
@@ -167,3 +169,48 @@
 					  `(,(- n i) . ,completions)))
 			    (number-partitions i (- k 1))))
 		     (iota n)))))
+
+(define (cycles #;from source #;to target)
+
+  (define (counterpart #;of element)
+    (define (counterpart #;of element #;from source #;in target)
+      (let (((suspect . source) source)
+	    ((candidate . target) target))
+	(if (equal? suspect element)
+	    candidate
+	    (counterpart #;of element #;from source #;to target))))
+    (counterpart #;of element #;from source #;to target))
+
+  (define (cycle #;from element)
+    (define (walk #;from element #;into path)
+      (if (is element member #;of path)
+	  (reverse path)
+	  (walk #;from (counterpart #;of element)
+		       #;into `(,element . ,path))))
+    (walk #;from element #;into '()))
+
+  (reverse
+   (fold-left (lambda (cycles current)
+		(if (any (lambda (cycle)
+			   (is current member #;of cycle))
+			 cycles)
+		    cycles
+		    `(,(cycle #;from current) . ,cycles)))
+	      '()
+	      source)))
+
+(e.g.
+ (cycles #;from '(1 2 3 4 5 6 7 8 9)
+		#;to '(6 1 5 4 7 2 8 3 9))
+ ===> ((1 6 2) (3 5 7 8) (4) (9)))
+
+(define ((permute #;with cycles) element)
+  (let* ((cycle (find (lambda (cycle)
+			(is element member #;of cycle))
+		      cycles))
+	 ((element . next) (find-tail (lambda (item)
+					(equal? item element))
+				      cycle)))
+    (if (null? next)
+	(first cycle)
+	(first next))))
