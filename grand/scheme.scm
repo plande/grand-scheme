@@ -23,7 +23,7 @@
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       pretty-print
-	       bind
+	       bind fill
 	       argmin
 	       argmax
 	       min+max
@@ -127,7 +127,7 @@
 	       let let* lambda define and-let*
 	       define-syntax let-syntax letrec-syntax
 	       match primitive-lambda
-	       is isn't
+	       is isn't isnt
 	       length. any. every.
 	       iterations
 	       matrix? M* M+ det inv dim transpose diag

@@ -14,7 +14,8 @@
 	    neither
 	    both
 	    is
-	    isn't))
+	    isn't ;; should be deprecated
+	    isnt))
 
 (define (impose-arity n procedure)
   (let ((new-procedure (lambda args (apply procedure args))))
@@ -99,12 +100,43 @@
  (and ((both positive? integer?) 5)
       (not ((both positive? integer?) 4.5))))
 
-(define-syntax is ()
+(define-syntax infix ()
   ((_ x related-to? y)
    (related-to? x y))
   ((_ x related-to? y . likewise)
-   (and (is x related-to? y)
-	(is y . likewise))))
+   (and (infix x related-to? y)
+	(infix y . likewise))))
+
+(define-syntax is ()
+  ((_ x related-to? y . likewise)
+   (infix x related-to? y . likewise))
+
+  ((_ x)
+   (lambda (y)
+     (equal? x y)))
+
+  ((_ left relation)
+   (lambda (right)
+     (relation left right))))
+
+(e.g.
+ (filter (lambda (x)
+	   (is 5 < x <= 10))
+	 '(1 3 5 7 9 11))
+ ===> (7 9))
+
 
 (define-syntax (isn't . stuff)
   (not (is . stuff)))
+
+(define-syntax isnt ()
+  ((_ x)
+   (lambda (y)
+     (not (equal? x y))))
+
+  ((_ left relation)
+   (lambda (right)
+     (not (relation left right))))
+
+  ((_ x related-to? y . likewise)
+   (not (infix x related-to? y . likewise))))
