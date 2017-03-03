@@ -14,7 +14,7 @@
 	    neither
 	    both
 	    is
-	    isn't ;; should be deprecated
+	    ;;isn't ;; should be deprecated
 	    isnt))
 
 (define (impose-arity n procedure)
@@ -126,7 +126,7 @@
  ===> (7 9))
 
 
-(define-syntax (isn't . stuff)
+#;(define-syntax (isn't . stuff)
   (not (is . stuff)))
 
 (define-syntax isnt ()

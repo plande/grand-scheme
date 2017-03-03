@@ -1,3 +1,4 @@
 (define-module (grand guilt)
   #:re-export ((bind . bind-socket)
-	       (select . select-file-descriptors)))
+	       (select . select-file-descriptors)
+	       (times . system-times)))

@@ -23,7 +23,8 @@
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       pretty-print
-	       bind fill
+	       bind
+	       fill
 	       argmin
 	       argmax
 	       min+max
@@ -127,13 +128,14 @@
 	       let let* lambda define and-let*
 	       define-syntax let-syntax letrec-syntax
 	       match primitive-lambda
-	       is isn't isnt
+	       is isnt ;; isn't
 	       length. any. every.
-	       iterations
+	       (iterations . times)
 	       matrix? M* M+ det inv dim transpose diag
 	       zero matrix-ref matrix-column
 	       bind-socket
 	       select-file-descriptors
+	       system-times
 	       attribute-ref
 	       attributes?
 	       attributes+children

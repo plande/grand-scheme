@@ -3,7 +3,7 @@
   #:use-module (grand binding)
   #:use-module (srfi srfi-1)
   #:use-module (grand examples)
-  #:export (define/partial))
+  #:export-syntax (define/partial))
 
 (define (specializes? pattern-a pattern-b)
   "is pattern-a a specialization of pattern-b?"
