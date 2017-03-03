@@ -165,7 +165,7 @@
 	(else
 	 (append-map (lambda (i)
 		       (filter-map (lambda (completions)
-				     (and (isn't (- n i) < k <= i)
+				     (and (isnt (- n i) < k <= i)
 					  `(,(- n i) . ,completions)))
 			    (number-partitions i (- k 1))))
 		     (iota n)))))
