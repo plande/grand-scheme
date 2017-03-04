@@ -60,7 +60,7 @@
 	result
 	(let (((initial ... last) prefix))
 	  (carry #;from initial #;to `(,last . ,suffix)
-			#;until condition)))))
+			#;until success?)))))
 
 (define (rename-clashing expression)
   
@@ -133,18 +133,18 @@
     (((renamed . original) . remaining-mappings)
      (let ((unzipped (assoc renamed bindings))
 	   (zipped (assoc original bindings)))
-       (cond ((and unzipped zipped)
-	      (let (((renamed . unzipped) unzipped)
-		    ((original . zipped) zipped))
-		(and (every (lambda (repetition)
-			      (equal? repetition zipped))
-			    unzipped)
-		     (fold-bindings (filter (lambda ((name . value))
-					      (not (equal? name renamed)))
-					    bindings)
-				    remaining-mappings))))
-	     (else
-	      (and bindings
+       (and bindings
+	    (cond ((and unzipped zipped)
+		   (let (((renamed . unzipped) unzipped)
+			 ((original . zipped) zipped))
+		     (and (every (lambda (repetition)
+				   (equal? repetition zipped))
+				 unzipped)
+			  (fold-bindings (filter (lambda ((name . value))
+						   (not (equal? name renamed)))
+						 bindings)
+					 remaining-mappings))))
+		  (else
 		   (fold-bindings (map (lambda ((name . value))
 					 (if (equal? name renamed)
 					     `(,original . ,value)
@@ -201,8 +201,8 @@
 	     (else
 	      `((,pattern . ,form) . ,bound-variables))))
       ))
-  (let* ((pattern mapping (rename-clashing pattern))
-	 (bindings (fit pattern #;to form #;with '())))
+  (and-let* ((pattern mapping (rename-clashing pattern))
+	     (bindings (fit pattern #;to form #;with '())))
     (fold-bindings bindings #;with mapping)))
 
 (e.g. (bind '(a b . c) '(1 2 3)) ===> ((c 3) (b . 2) (a . 1)))

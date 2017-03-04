@@ -1,7 +1,7 @@
 (define-module (grand scheme)
   #:use-module (grand syntax)
   #:use-module (grand examples)
-  #:use-module (grand expand)
+  ;;#:use-module (grand expand)
   #:use-module (grand publishing)
   #:use-module (grand default-specific)
   #:use-module (grand define-memoized)
@@ -20,6 +20,7 @@
   #:use-module (grand matrix)
   #:use-module (grand guilt)
   #:use-module (grand reading)
+  #:use-module (grand cursor)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       pretty-print
@@ -148,7 +149,21 @@
 	       read-lines
 	       read-line
 	       read-delimited
-	       expand expand-form
+	       ;;expand expand-form
+	       cursor?
+	       cursor-focus
+	       
+	       cursor-next
+	       cursor-previous
+	       cursor-points-to-location?
+	       cursor-points-to-expression?
+	       cursor-embracing?
+	       cursor-parent+location
+	       cursor-depth
+
+	       splice-subexpression
+	       replace-subexpression
+	       remove-subexpression	       
 	       )
   #:replace ((compose/values . compose)
 	     ))
