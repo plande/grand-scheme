@@ -111,7 +111,7 @@ they can be used in the way their users like. The advantages of Scheme
 are that it assumes very little, and is widely available, even on
 systems you've never heard of.
 
-The Grand Scheme library contains a set of extensions that allow
+The Grand Scheme glossary contains a set of extensions that allow
 to use Scheme in the way I like -- and I hope you'll like it too.
 But rather than relying solely on my personal taste, I try to conform
 to a set of rules that make working with the language easier.
@@ -136,11 +136,11 @@ to `cond`, if the patterns are simple
 In this way, I find it easier to memoize the order (or role) of arguments
 to functions.
 
-The library is intended primarily for Guile Scheme, because this
+The glossary is intended primarily for Guile Scheme, because this
 is the implementation that I've been using most often. For that
 reason, I also use the module system of Guile, rather than the
 R6RS module system. I hope to change this one day to make the
-library more portable, but for now I have some more urgent
+glossary more portable, but for now I have some more urgent
 things to do.
 
 ## The `(grand scheme)` meta-module
@@ -217,6 +217,6 @@ form, which can also capture multiple values. If a
 pattern fails to match, `and-let*` evaluates to `#false`.
 - allows to omit `syntax-rules` when using `define-syntax`,
 `let-syntax` and `letrec-syntax` in particular ways
-- re-exports the `match` syntax from `(ice-9 match)` library,
+- re-exports the `match` syntax from `(ice-9 match)` module,
 so that the latter doesn't need to be imported.
 
