@@ -21,6 +21,7 @@
   #:use-module (grand guilt)
   #:use-module (grand reading)
   #:use-module (grand cursor)
+  #:use-module (grand endian)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       pretty-print
@@ -163,7 +164,27 @@
 
 	       splice-subexpression
 	       replace-subexpression
-	       remove-subexpression	       
+	       remove-subexpression
+
+	       unsigned-little-endian
+	       unsigned-little-endian-32
+	       unsigned-little-endian-64
+	       little-endian
+	       little-endian-16
+	       little-endian-32
+	       little-endian-64
+	       unsigned-big-endian
+	       unsigned-big-endian-16
+	       unsigned-big-endian-32
+	       unsigned-big-endian-64
+	       big-endian
+	       big-endian-16
+	       big-endian-32
+	       big-endian-64
+	       8-bits
+	       16-bits
+	       32-bits
+	       64-bits
 	       )
   #:replace ((compose/values . compose)
 	     ))
