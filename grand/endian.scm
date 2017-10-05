@@ -75,6 +75,18 @@
 (define (big-endian-64 value)
   (big-endian 8 value))
 
+
+(e.g. (little-endian 2 119) ===> (119 0))
+
+(e.g. (little-endian 2 -119) ===> (137 255))
+
+(e.g. (little-endian-64 (+ 256 119)) ===> (119 1 0 0 0 0 0 0))
+
+(e.g. (little-endian-32 (+ 256 119)) ===> (119 1 0 0))
+
+(e.g. (big-endian-32 (+ 256 119)) ===> (0 0 1 119))
+
+
 (define (8-bits number)
   (extend-left ((digits/base 2) number) #;to 8 #;with 0))
 
@@ -88,11 +100,10 @@
   (append-map 8-bits (big-endian 8 number)))
 
 
-(e.g. (little-endian-32 (+ 256 119)) ===> (119 1 0 0))
-(e.g. (big-endian-32 (+ 256 119)) ===> (0 0 1 119))
-
 (e.g. (8-bits 119) ===> (0 1 1 1 0 1 1 1))
+
 (e.g. (16-bits (* 119 256)) ===> (0 1 1 1 0 1 1 1 0 0 0 0 0 0 0 0))
+
 
 (e.g. (map 8-bits (little-endian 2 311))
       ===> ((0 0 1 1 0 1 1 1) (0 0 0 0 0 0 0 1)))
