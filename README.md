@@ -143,6 +143,13 @@ R6RS module system. I hope to change this one day to make the
 glossary more portable, but for now I have some more urgent
 things to do.
 
+Note also, that I have recently submitted a part of this module
+as [SRFI-156](https://srfi.schemers.org/srfi-156/), which allows
+to use infix syntax, as in, say, `(is x < y <= z)`. In addition,
+the occurrence of the `_` symbol causes the expression to become
+a function, so for example expressions like `(is _ < x <= _)`
+are interpreted as `(lambda (_1 _2) (and (< _1 x) (<= x _2)))`.
+
 ## The `(grand scheme)` meta-module
 
 The `(grand scheme)` module is a meta-module that re-exports
@@ -164,7 +171,7 @@ For example, given the above definition of `unfold-left-until`,
 one could write an example usage for the purpose of clarification:
 ```
 (e.g.
-  (unfold-left-until (lambda (x) (> x 10)) 1+ 0)
+  (unfold-left-until (is _ > 10) 1+ 0)
   ===> (0 1 2 3 4 5 6 7 8 9 10))
 ```
 If the value of expression is not `equal?` to the
@@ -191,7 +198,9 @@ as `(ice-9 nice-9)`, extends some of the core bindings of Scheme, in the followi
 and `lambda`,
 ```
 (e.g.
-  (map (lambda ((a . b)) (+ a b)) '((1 . 2) (3 . 4)(5 . 6)))
+  (map (lambda ((a . b))
+         (+ a b))
+       '((1 . 2) (3 . 4)(5 . 6)))
   ===> (3 7 11))
 ```
 - it allows the `let*` form to capture multiple values

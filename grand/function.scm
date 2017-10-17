@@ -65,7 +65,7 @@
 
 (define ((partial function . args) . remaining-args)
   (apply function `(,@args ,@remaining-args)))
-  
+
 #;(assert (lambda (f x)
 (if (defined? (f x))
     (equal? (f x) ((partial f) x)))))
@@ -100,43 +100,48 @@
  (and ((both positive? integer?) 5)
       (not ((both positive? integer?) 4.5))))
 
-(define-syntax infix ()
-  ((_ x related-to? y)
-   (related-to? x y))
-  ((_ x related-to? y . likewise)
-   (and (infix x related-to? y)
-	(infix y . likewise))))
 
-(define-syntax is ()
-  ((_ x related-to? y . likewise)
-   (infix x related-to? y . likewise))
+(define-syntax infix/postfix ()
+  
+  ((infix/postfix x somewhat?)
+   (somewhat? x))
 
-  ((_ x)
-   (lambda (y)
-     (equal? x y)))
+  ((infix/postfix left related-to? right)
+   (related-to? left right))
 
-  ((_ left relation)
-   (lambda (right)
-     (relation left right))))
+  ((infix/postfix left related-to? right . likewise)
+   (let ((right* right))
+     (and (infix/postfix left related-to? right*)
+	  (infix/postfix right* . likewise)))))
+
+(define-syntax extract-placeholders (_)
+  ((extract-placeholders final () () body)
+   (final (infix/postfix . body)))
+
+  ((extract-placeholders final () args body)
+   (lambda args (final (infix/postfix . body))))
+
+  ((extract-placeholders final (_ op . rest) (args ...) (body ...))
+   (extract-placeholders final rest (args ... arg) (body ... arg op)))
+
+  ((extract-placeholders final (arg op . rest) args (body ...))
+   (extract-placeholders final rest args (body ... arg op)))
+
+  ((extract-placeholders final (_) (args ...) (body ...))
+   (extract-placeholders final () (args ... arg) (body ... arg)))
+
+  ((extract-placeholders final (arg) args (body ...))
+   (extract-placeholders final () args (body ... arg))))
+
+(define-syntax (identity-syntax form)
+  form)
+
+(define-syntax (is . something)
+  (extract-placeholders identity-syntax something () ()))
+
+(define-syntax (isnt . something)
+  (extract-placeholders not something () ()))
 
 (e.g.
- (filter (lambda (x)
-	   (is 5 < x <= 10))
-	 '(1 3 5 7 9 11))
+ (filter (is 5 < _ <= 10) '(1 3 5 7 9 11))
  ===> (7 9))
-
-
-#;(define-syntax (isn't . stuff)
-  (not (is . stuff)))
-
-(define-syntax isnt ()
-  ((_ x)
-   (lambda (y)
-     (not (equal? x y))))
-
-  ((_ left relation)
-   (lambda (right)
-     (not (relation left right))))
-
-  ((_ x related-to? y . likewise)
-   (not (infix x related-to? y . likewise))))
