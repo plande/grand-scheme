@@ -42,6 +42,7 @@
 	    intersperse
 	    chunks
 	    none
+	    proper-list+dotted-tail
 	    )
   #:re-export (every
 	       any
@@ -431,3 +432,15 @@
 
 (e.g.
  (chunks '(1 2 3 4 5 6) 3) ===> ((1 2 3) (4 5 6)))
+
+(define (proper-list+dotted-tail improper-list)
+  (match improper-list
+    ((prefix . rest)
+     (let ((proper-list tail (proper-list+dotted-tail rest)))
+       (values `(,prefix . ,proper-list) tail)))
+    (_
+     (values '() improper-list))
+    ))
+
+(e.g.
+ (proper-list+dotted-tail '(1 2 . 3)) ===> (1 2) 3)

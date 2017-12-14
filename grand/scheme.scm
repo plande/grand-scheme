@@ -93,6 +93,10 @@
 	       (define/partial . define+)
 	       pass
 	       partial
+	       maybe
+	       either
+	       neither
+	       both
 	       string-matches
 	       symbol-match
 	       number->symbol
@@ -123,6 +127,7 @@
 	       intersperse
 	       weave
 	       chunks
+	       proper-list+dotted-tail
 	       publish
 	       natural?
 	       number/base
