@@ -7,6 +7,7 @@
   #:replace ((cdefine . define)
 	     (mlambda . lambda)
 	     (named-match-let-values . let)
+	     (or/values . or)
 	     (match-let*-values . let*)
 	     (letrec-syntax/rules . letrec-syntax)
 	     (let-syntax/rules . let-syntax)
@@ -213,6 +214,21 @@
 |#
       )))
 
+(define-syntax or/values
+  (syntax-rules ()
+    ((_)
+     #false)
+    
+    ((or/values final)
+     final)
+    
+    ((or/values first . rest)
+     (call-with-values (lambda () first)
+       (lambda result
+	 (if (and (pair? result) (car result))
+	     (apply values result)
+	     (or/values . rest)))))))
+
 (define-syntax match-let*-values
   (lambda (stx)
     (syntax-case stx ()
@@ -285,41 +301,22 @@
 	      (and-let*/match (rest ...)
 		body ...)))
 
-      ((_ ((values ... expression) rest ...) body ...)
-       (every identifier? #'(values ...))
+      ((_ ((value values ... expression) rest ...) body ...)
+       (identifier? #'value)
        #'(call-with-values (lambda () expression)
 	   (match-lambda* 
-	       ((values ... . _)
-		(and values ...
-		     (and-let*/match (rest ...)
-				     body ...)))
+	     ((value values ... . _)
+	      (and value
+		   (and-let*/match (rest ...)
+				   body ...)))
 	     (_ #f))))
 
-      ;; this behavior can be questionable, but to increase coherence,
-      ;; every identifier bound with multiple values at the top level
-      ;; must be non-false, so while
-      ;;
-      ;;    (and-let* ((a b #f (values 1 2 #f))) #t)
-      ;;
-      ;; will succeed, 
-      ;;
-      ;;    (and-let* ((a b #f (values 1 #f #f))) #t)
-      ;;
-      ;; will fail.
-      ;; On the other hand, arguments bound as a result to pattern-matching
-      ;; can have any value, so 
-      ;;
-      ;; (and-let* (((a) (b) (values '(#f) '(#f)))) #t)
-      ;;
-      ;; will succeed.
       ((_ ((values ... expression) rest ...) body ...)
-       (with-syntax (((identifiers ...) (filter identifier? #'(values ...))))
-	 #'(call-with-values (lambda () expression)
-	     (lambda args
-	       (match args
-		 ((values ... . _)
-		  (and identifiers ...
-		       (and-let*/match (rest ...)
-				       body ...)))
-		 (_ #f))))))
+       #'(call-with-values (lambda () expression)
+	   (match-lambda* 
+	     ((values ... . _)
+	      (and-let*/match (rest ...)
+			      body ...))
+	     (_ #f))))
+
       )))
