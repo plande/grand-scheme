@@ -128,7 +128,7 @@
 	       natural?
 	       number/base
 	       digits/base
-	       let let* lambda define and-let*
+	       let let* lambda define and-let* or
 	       define-syntax let-syntax letrec-syntax
 	       match primitive-lambda
 	       is isnt ;; isn't
