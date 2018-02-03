@@ -2,6 +2,7 @@
   #:use-module (grand syntax)
   #:use-module (grand list)
   #:use-module (grand numbers)
+  #:use-module (grand examples)
   #:export (unsigned-little-endian
 	    unsigned-little-endian-32
 	    unsigned-little-endian-64
