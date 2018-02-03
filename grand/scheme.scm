@@ -16,17 +16,13 @@
   #:use-module (grand symbol)
   #:use-module (grand numbers)
   #:use-module (grand improper)
-  #:use-module (grand binding)
   #:use-module (grand matrix)
   #:use-module (grand guilt)
   #:use-module (grand reading)
-  #:use-module (grand cursor)
   #:use-module (grand endian)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       pretty-print
-	       bind
-	       fill
 	       argmin
 	       argmax
 	       min+max
@@ -155,21 +151,6 @@
 	       read-lines
 	       read-line
 	       read-delimited
-	       ;;expand expand-form
-	       cursor?
-	       cursor-focus
-	       
-	       cursor-next
-	       cursor-previous
-	       cursor-points-to-location?
-	       cursor-points-to-expression?
-	       cursor-embracing?
-	       cursor-parent+location
-	       cursor-depth
-
-	       splice-subexpression
-	       replace-subexpression
-	       remove-subexpression
 
 	       unsigned-little-endian
 	       unsigned-little-endian-32
