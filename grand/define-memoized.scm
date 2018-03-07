@@ -5,16 +5,18 @@
 
 
 (define (memoize proc)
-  (let ((cache (make-hash-table)))
-    (lambda args
-      (match (hash-get-handle cache args)
-	((key . memoized-result)
-	 (apply values memoized-result))
-	(_
-	 (call-with-values (lambda () (apply proc args))
-	   (lambda result
-	     (hash-set! cache args result)
-	     (apply values result))))))))
+  (let* ((cache (make-hash-table))
+	 (proc* (lambda args
+		  (match (hash-get-handle cache args)
+		    ((key . memoized-result)
+		     (apply values memoized-result))
+		    (_
+		     (call-with-values (lambda () (apply proc args))
+		       (lambda result
+			 (hash-set! cache args result)
+			 (apply values result))))))))
+    (set-procedure-property! proc* 'cache cache)
+    proc*))
 
 (define-syntax (define/memoized (name . args) . body)
   (define name (memoize (lambda args . body))))
