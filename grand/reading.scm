@@ -1,6 +1,6 @@
 (define-module (grand reading)
   #:use-module (ice-9 rdelim)
-  #:export (read-s-expressions read-file read-lines)
+  #:export (read-s-expressions read-file read-lines print)
   #:re-export (read-line read-delimited))
 
 (define* (read-lines #:optional (port (current-input-port)))
@@ -19,3 +19,8 @@
 
 (define (read-file filename)
   (read-s-expressions (open-input-file filename)))
+
+(define (print . args)
+  (for-each display args)
+  (newline)
+  (apply values args))

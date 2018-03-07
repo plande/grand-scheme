@@ -23,6 +23,7 @@
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       pretty-print
+	       print
 	       argmin
 	       argmax
 	       min+max
