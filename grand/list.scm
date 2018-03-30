@@ -7,8 +7,11 @@
 	    unique?
 	    argmin
 	    argmax min+max argmin+argmax
+	    omit
 	    skip
 	    alter
+	    insert
+	    splice
 	    generate-list
 	    fold-left
 	    unfold-left
@@ -174,6 +177,31 @@
 (e.g.
  (alter #;element-number 1 #;in '(ząb dupa zębowa) #;with 'zupa)
  ===> (ząb zupa zębowa))
+
+(define (omit k #;elements-at i #;in list)
+  (let* ((prefix list (split-at list i))
+	 (suffix (drop list k)))
+    `(,@prefix ,@suffix)))
+
+(e.g.
+ (omit 3 #;elements-at 2 #;in '(0 1 2 3 4 5 6))
+ ===> (0 1 5 6))
+
+(define (insert element #;into list #;at position)
+  (let ((prefix suffix (split-at list position)))
+    `(,@prefix ,element ,@suffix)))
+
+(e.g.
+ (insert 'x #;into '(a b c) #;at 2)
+ ===> (a b x c))
+
+(define (splice sublist #;into list #;at position)
+  (let ((prefix suffix (split-at list position)))
+    `(,@prefix ,@sublist ,@suffix)))
+
+(e.g.
+ (splice '(x y) #;into '(u v w z) #;at 3)
+ ===> (u v w x y z))
 
 (define (generate-list n generator)
   #;(assert (and (integer? size) (>= size 0)))

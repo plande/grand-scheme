@@ -14,8 +14,14 @@
 	    neither
 	    both
 	    is
-	    ;;isn't ;; should be deprecated
-	    isnt))
+	    isnt)
+  #:export-syntax (with-procedure-properties))
+
+(define-syntax (with-procedure-properties ((property value) ...) procedure)
+  (let ((target procedure))
+    (set-procedure-property! target 'property value)
+    ...
+    target))
 
 (define (impose-arity n procedure)
   (let ((new-procedure (lambda args (apply procedure args))))

@@ -9,7 +9,7 @@
 
 (let-syntax (((specific-literal-syntax binding-structure name value)
 	      (lambda (stx)
-		#;(assert (appears? #'name #;in #'binding-structure))
+		;;(assert (appears? #'name #;in #'binding-structure))
 		(syntax-case stx ()
 		  ((_ (binding-structure (... ...)) actions . *)
 		   (with-syntax ((specific (datum->syntax stx 

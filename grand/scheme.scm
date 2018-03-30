@@ -18,10 +18,12 @@
   #:use-module (grand improper)
   #:use-module (grand matrix)
   #:use-module (grand guilt)
+  #:use-module (grand loops)
   #:use-module (grand reading)
   #:use-module (grand endian)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
+	       for collect numbers
 	       pretty-print
 	       print
 	       argmin
@@ -30,6 +32,9 @@
 	       argmin+argmax
 	       skip
 	       alter
+	       omit
+	       insert
+	       splice
 	       generate-list
 	       with-default
 	       without-default
@@ -88,6 +93,7 @@
 	       memoize
 	       define/memoized
 	       (define/partial . define+)
+	       with-procedure-properties
 	       pass
 	       partial
 	       maybe
@@ -172,6 +178,6 @@
 	       16-bits
 	       32-bits
 	       64-bits
+	       (compose/values . compose)
 	       )
-  #:replace ((compose/values . compose)
-	     ))
+  )
