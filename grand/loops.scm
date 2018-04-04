@@ -3,6 +3,7 @@
   #:use-module (grand function)
   #:use-module (grand examples)
   #:use-module (grand list)
+  #:use-module (grand syntax)
   #:export (numbers)
   #:export-syntax (for collect))
 
