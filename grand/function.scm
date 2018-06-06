@@ -4,6 +4,7 @@
   #:use-module (srfi srfi-1)
   #:export (impose-arity
 	    arity
+	    name/source
 	    clip
 	    pass
 	    compose/values
@@ -14,14 +15,7 @@
 	    neither
 	    both
 	    is
-	    isnt)
-  #:export-syntax (with-procedure-properties))
-
-(define-syntax (with-procedure-properties ((property value) ...) procedure)
-  (let ((target procedure))
-    (set-procedure-property! target 'property value)
-    ...
-    target))
+	    isnt))
 
 (define (impose-arity n procedure)
   (let ((new-procedure (lambda args (apply procedure args))))
@@ -31,6 +25,10 @@
     (set-procedure-property! new-procedure 'imposed-arity
 			     (if (list? n) n `(,n 0 #f)))
     new-procedure))
+
+(define (name/source procedure)
+  (or (procedure-name procedure)
+      (procedure-source procedure)))
 
 (define (arity procedure)
   ;;(assert (procedure? procedure))

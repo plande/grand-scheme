@@ -36,9 +36,7 @@
 	       insert
 	       splice
 	       generate-list
-	       with-default
-	       without-default
-	       specify
+	       with-default without-default specify
 	       rest
 	       equivalence-classes
 	       subsets
@@ -139,6 +137,7 @@
 	       define-syntax let-syntax letrec-syntax
 	       match primitive-lambda
 	       is isnt ;; isn't
+	       name/source
 	       length. any. every.
 	       (iterations . times)
 	       matrix? M* M+ det inv dim transpose diag

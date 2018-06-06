@@ -10,8 +10,13 @@
 ;; Python-style for-loop and list comprehensions
 ;; "make you a python for great bad"
 
+
+
 (define-syntax for
-  (syntax-rules (in)
+  (syntax-rules (in =>)
+    ((for (key => value) in hash-map actions . *)
+     (hash-for-each (lambda (key value) actions . *) hash-map))
+    
     ((for x in list actions . *)
      (for-each (lambda (x) actions . *) list))))
 

@@ -3,9 +3,10 @@
   #:use-module (srfi srfi-1)
   #:re-export (match)
   #:export ((and-let*/match . and-let*)
+	    with-procedure-properties
 	    primitive-lambda)
   #:replace ((cdefine . define)
-	     (mlambda . lambda)
+	     (smlambda . lambda)
 	     (named-match-let-values . let)
 	     (or/values . or)
 	     (match-let*-values . let*)
@@ -17,6 +18,12 @@
 ;; "abuses" behave meaningfully -- in particular, it allows to
 ;; destructure bindings in "lambda" and "let" forms and use curried definitions.
 ;; It also provides pattern-matching version of "and-let*".
+
+(define-syntax-rule (with-procedure-properties ((property value) ...) procedure)
+  (let ((target procedure))
+    (set-procedure-property! target 'property value)
+    ...
+    target))
 
 (define-syntax define-syntax/rules
   (syntax-rules ()
@@ -99,6 +106,10 @@
 	   (_ (error 'mlambda (current-source-location) '(args body ...)))))
       )))
 
+(define-syntax-rule (smlambda args . body)
+  (with-procedure-properties ((source '(lambda args . body)))
+    (mlambda args . body)))
+
 (define-syntax primitive-lambda
   (syntax-rules ()
     ((_ . whatever)
@@ -108,13 +119,14 @@
   (syntax-rules ()
     ((_ ((head . tail) . args) body ...)
      (cdefine (head . tail)
-       (mlambda args body ...)))
-    ((_ (name . args) body ...)
-     (define name (mlambda args body ...)))
+	      (mlambda args body ...)))
+    ((_ (function . args) body ...)
+     (define function
+       (with-procedure-properties ((name 'function))
+	 (smlambda args body ...))))
     ((_ . rest)
      (define . rest))
     ))
-
 
 (define-syntax list<-values
   (syntax-rules ()
