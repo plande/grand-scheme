@@ -198,7 +198,7 @@ as `(ice-9 nice-9)`, extends some of the core bindings of Scheme, in the followi
 and `lambda`,
 ```
 (e.g.
-  (map (lambda ((a . b))
+  (map (lambda (`(,a . ,b))
          (+ a b))
        '((1 . 2) (3 . 4)(5 . 6)))
   ===> (3 7 11))
