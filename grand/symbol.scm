@@ -8,7 +8,7 @@
 (define (symbol-match pattern symbol)
   (and-let* ((string (symbol->string symbol))
 	     ((first-match . _) (string-matches pattern string)))
-    first-match))
+    (map string->symbol first-match)))
 
 (define (number->symbol n)
   (string->symbol (number->string n)))
