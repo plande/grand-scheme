@@ -21,6 +21,7 @@
   #:use-module (grand loops)
   #:use-module (grand reading)
   #:use-module (grand endian)
+  #:use-module (grand graph)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       for collect numbers
@@ -180,5 +181,7 @@
 	       32-bits
 	       64-bits
 	       (compose/values . compose)
+	       optimal-path
+	       reach
 	       )
   )
