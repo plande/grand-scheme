@@ -4,6 +4,7 @@
   #:use-module (grand examples)
   #:use-module (grand publishing)
   #:export (
+	    only
 	    unique?
 	    argmin
 	    argmax min+max argmin+argmax
@@ -46,6 +47,7 @@
 	    chunks
 	    none
 	    proper-list+dotted-tail
+	    flatten
 	    )
   #:re-export (every
 	       any
@@ -72,6 +74,8 @@
 	       find-tail
 	       )
   )
+
+(define only filter)
 
 (define (none pred . ls)
   (not (apply any pred ls)))
@@ -326,9 +330,18 @@
 
 (e.g. (indexed '(a b c)) ===> ((0 a) (1 b) (2 c)))
 
-(define (unzip n l)
+(define (unzip-n n l)
   (apply values (take (apply map list l) n)))
 
+(define (unzip list)
+  (match list
+    (`(,first . ,rest)
+     (unzip-n (length first) list))
+    ('()
+     '())))
+
+(e.g.
+ (unzip '((1 a) (2 b) (3 c))) ===> (1 2 3) (a b c))
 
 (define (map/values f . ls)
   #;(assert (pair? ls))
@@ -337,7 +350,7 @@
     (if (null? (car ls))
 	(if (null? result)
 	    '()
-	    (unzip (length (car result)) (reverse result)))
+	    (unzip (reverse result)))
 	(loop (map cdr ls)
 	      `(,(call-with-values (lambda () (apply f (map car ls))) list)
 		,@result)))))
@@ -472,3 +485,15 @@
 
 (e.g.
  (proper-list+dotted-tail '(1 2 . 3)) ===> (1 2) 3)
+
+(define (flatten x)
+  (match x
+    (`(,head . ,tail)
+     `(,@(flatten head) ,@(flatten tail)))
+    ('()
+     '())
+    (_
+     `(,x))))
+
+(e.g.
+ (flatten '((1 . 2) 3 ((4)) . 5)) ===> (1 2 3 4 5))

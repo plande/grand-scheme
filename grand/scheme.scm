@@ -129,6 +129,8 @@
 	       weave
 	       chunks
 	       proper-list+dotted-tail
+	       flatten
+	       only
 	       publish
 	       natural?
 	       number/base
