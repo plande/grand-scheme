@@ -31,6 +31,11 @@
      (define-syntax name
        (syntax-rules ()
 	 ((name . pattern) template))))
+    
+    ((_ (name . pattern) . expansion)
+     (define-syntax name
+       (syntax-rules ()
+	 ((name . pattern) (begin . expansion)))))
 
     ((_ name transformer)
      (define-syntax name transformer))
@@ -40,6 +45,13 @@
        (syntax-rules keywords
 	 (pattern
 	  template)
+	 ...)))
+
+    ((_ name keywords (pattern . expansion) ...)
+     (define-syntax name
+       (syntax-rules keywords
+	 (pattern
+	  (begin . expansion))
 	 ...)))
     ))
 
