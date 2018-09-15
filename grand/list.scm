@@ -5,6 +5,7 @@
   #:use-module (grand publishing)
   #:export (
 	    only
+	    without-first
 	    unique?
 	    argmin
 	    argmax min+max argmin+argmax
@@ -76,6 +77,18 @@
   )
 
 (define only filter)
+
+(define (without-first satisfying? list)
+  (match list
+    ('()
+     list)
+    (`(,head . ,tail)
+     (if (satisfying? head)
+	 tail
+	 `(,head . ,(without-first satisfying? tail))))))
+
+(e.g.
+ (without-first even? '(1 2 3 4 5)) ===> (1 3 4 5))
 
 (define (none pred . ls)
   (not (apply any pred ls)))

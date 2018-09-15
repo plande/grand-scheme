@@ -79,6 +79,7 @@
 	       difference
 	       intersection
 	       same-sets?
+	       same-set?
 	       subset?
 	       set
 	       member?
@@ -132,6 +133,7 @@
 	       proper-list+dotted-tail
 	       flatten
 	       only
+	       without-first
 	       publish
 	       natural?
 	       number/base

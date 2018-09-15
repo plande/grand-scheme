@@ -2,7 +2,7 @@
   #:use-module (grand syntax)
   #:use-module (srfi srfi-1)
   #:use-module (grand examples)
-  #:export (union difference intersection equivalence-classes in? same-sets?
+  #:export (union difference intersection equivalence-classes in? same-sets? same-set?
 		  subset? member? set powerset))
 
 (define (union . args)
@@ -58,6 +58,8 @@
 (define (same-sets? . sets)
   (apply lset= equal? sets))
 
+(define same-set? same-sets?)
+		   
 (define (subset? . sets)
   (apply lset<= equal? sets))
 
