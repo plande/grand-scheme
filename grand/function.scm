@@ -17,6 +17,8 @@
 	    is
 	    isnt))
 
+(use-modules (grand examples) (grand syntax) (srfi srfi-1))
+
 (define (impose-arity n procedure)
   (let ((new-procedure (lambda args (apply procedure args))))
     (set-procedure-property! new-procedure 'name
@@ -45,14 +47,14 @@
      args)))
 
 (define (compose/values . fns)
-  (define (make-chain fn chains)
+  (define (make-chain chains fn)
     (impose-arity
      (arity fn)
      (lambda args
        (call-with-values 
 	   (lambda () (apply fn args))
 	 (lambda vals (apply chains (clip vals (arity chains))))))))
-  (let ((composer (reduce make-chain values fns)))
+  (let ((composer (fold-right make-chain values fns)))
     composer))
 
 (define (iterations n f)

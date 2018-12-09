@@ -25,6 +25,9 @@
     ...
     target))
 
+(define-syntax-rule (without-procedure-properties _ procedure)
+  procedure)
+
 (define-syntax define-syntax/rules
   (syntax-rules ()
     ((_ (name . pattern) template)
@@ -119,7 +122,7 @@
       )))
 
 (define-syntax-rule (smlambda args . body)
-  (with-procedure-properties ((source '(lambda args . body)))
+  (without-procedure-properties ((source '(lambda args . body)))
     (mlambda args . body)))
 
 (define-syntax primitive-lambda
@@ -134,7 +137,7 @@
 	      (mlambda args body ...)))
     ((_ (function . args) body ...)
      (define function
-       (with-procedure-properties ((name 'function))
+       (without-procedure-properties ((name 'function))
 	 (smlambda args body ...))))
     ((_ . rest)
      (define . rest))

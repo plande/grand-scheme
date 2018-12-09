@@ -1,6 +1,8 @@
 (define-module (grand publishing)
   #:use-module (grand syntax)
   #:use-module (srfi srfi-1)
+  #:use-module (grand expand)
+  #:use-module (grand function)
   #:export-syntax (publish))
 
 ;; The `publish' macro is used to provide means to separate public
@@ -24,60 +26,33 @@
 ;;     (set! f (let () (define (f x) (+ a x)) f))
 ;;     (set! g (let () (define (g x) (* a y)) g))))
 
-(define-syntax (publish definitions ...)
-  (publisher (definitions ...) ()))
+(define-macro (publish . stuff)
 
-(define-syntax publisher (where)
-  ((_ (where private ...) (public ...))
-   (private+public (private ...) (public ...)))
-  ((_ (new defs ...) (approved ...))
-   (publisher (defs ...) 
-	      (approved ... new))))
-
-(define-syntax private+public
-  (lambda (stx)
-    (define (sorted-private/interfaces+names+bodies private specs)
-      ;; both sorting and name extraction takes place in the
-      ;; same function called from with-syntax, because that
-      ;; way we can tell the macro processor that the bindings in
-      ;; the code belong to the same scope
-      (define (interface-name interface)
-	(match interface
-	  ((head . tail)
-	   (interface-name head))
-	  ((? symbol? name)
-	   name)))
-      `(,(datum->syntax ;; this reordering is done, so that the
-	  stx ;; (e.g. ...) forms can be freely mixed with definitions
-	  (let ((definitions non-definitions
-		  (partition (lambda (prototype)
-			       (match prototype
-				 (((? symbol? x) . _)
-				  (string-contains (symbol->string x)
-						   "def"))
-				 (_ #f)))
-			     (syntax->datum private))))
-	    `(,@definitions ,@non-definitions)))
-	,(map (lambda (spec)
-		(syntax-case spec ()
-		  ((interface . body)
-		   (datum->syntax stx `(,(syntax->datum #'interface)
-					,(interface-name 
-					  (syntax->datum #'interface))
-					,(syntax->datum #'body))))))
-	      specs)))
-    (syntax-case stx ()
-      ((_ (private ...) ((define-variant . spec) ...))
-       (with-syntax ((((private ...) ((interface name body) ...))
-		      (sorted-private/interfaces+names+bodies 
-		       #'(private ...) #'(spec ...))))
-	 #'(begin
-	     (define name (and (defined? 'name) name))
-	     ...
-	     (let ()
-	       private ...
-	       (set! name
-		     (let ()
-		       (define-variant interface . body)
-		       name))
-	       ...)))))))
+  (define (definition? x)
+    (and-let* ((`(,define-keyword ,interface . ,_) x))
+      (is define-keyword member '(define define-syntax define*))))
+  
+  (define (interface-name interface)
+    (match interface
+      (`(,head . ,tail)
+       (interface-name head))
+      (_
+       interface)))
+  
+  (let* ((public `(where . ,private) (break (is _ eq? 'where) stuff))
+	 (expanded (map expand-form public))
+	 (definitions non-definitions (partition definition? expanded))
+	 (names (map (lambda (`(,define-keword ,interface . ,_))
+		       (interface-name interface))
+		     definitions)))
+    `(begin
+       ,@(map (lambda (name) `(define ,name #false)) names)
+       (let ()
+	 ,@private
+	 ,@(map (lambda (name definition)
+		  `(set! ,name 
+			 (let ()
+			   ,definition
+			   ,name)))
+		names definitions)
+	 ,@non-definitions))))
