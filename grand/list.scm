@@ -78,6 +78,9 @@
 
 (define only filter)
 
+(e.g.
+ (only even? '(1 2 3 4)) ===> (2 4))
+
 (define (without-first satisfying? list)
   (match list
     ('()
