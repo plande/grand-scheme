@@ -120,43 +120,72 @@
      (and (infix/postfix left related-to? right*)
 	  (infix/postfix right* . likewise)))))
 
-(define-syntax extract-placeholders (_ is isnt)
-  ((extract-placeholders final (() () body))
+(define-syntax extract-_ (_ is isnt)
+  ;; ok, it's a bit rough, so it requires an explanation.
+  ;; the macro operates on sequences of triples
+  ;; (<remaining-expr> <arg-list> <processed-expr>) +
+  ;; where <remaining-expr> is being systematically
+  ;; rewritten to <processed-expr>. When the _ symbol
+  ;; is encountered, it is replaced with a fresh "arg"
+  ;; symbol, which is appended to both <arg-list>
+  ;; and <processed-expr> (the goal is to create
+  ;; a lambda where each consecutive _ is treated as a new
+  ;; argument -- unless there are no _s: then we do not
+  ;; create a lambda, but a plain expression.
+  ;;
+  ;; The nested "is" and "isnt" operators are treated
+  ;; specially, in that the _s within those operators are
+  ;; not extracted
+  ;;
+
+  ;; final case with no _s
+  ((extract-_ final (() () body))
    (final (infix/postfix . body)))
 
-  ((extract-placeholders final (() args body))
+  ;; final case with some _s -- generate a lambda
+  ((extract-_ final (() args body))
    (lambda args (final (infix/postfix . body))))
 
-  ((extract-placeholders final (((is . t) . rest) args (body ...)) . *)
-   (extract-placeholders final (rest args (body ... (is . t))) . *))
+  ;; treat 'is' and 'isnt' operators specially and
+  ;; don't touch their _s
+  ((extract-_ final (((is . t) . rest) args (body ...)) . *)
+   (extract-_ final (rest args (body ... (is . t))) . *))
 
-  ((extract-placeholders final (((isnt . t) . rest) args (body ...)) . *)
-   (extract-placeholders final (rest args (body ... (isnt . t))) . *))
+  ((extract-_ final (((isnt . t) . rest) args (body ...)) . *)
+   (extract-_ final (rest args (body ... (isnt . t))) . *))
 
-  ((extract-placeholders final (((h . t) . rest) args body) . *)
-   (extract-placeholders final ((h . t) () ()) (rest args body) . *))
+  ;; push/unnest nested expression for processing
+  ((extract-_ final (((h . t) . rest) args body) . *)
+   (extract-_ final ((h . t) () ()) (rest args body) . *))
 
-  ((extract-placeholders final (() (args ...) body) (rest (args+ ...)
-                                                          (body+ ...)) . *)
-   (extract-placeholders final (rest (args+ ... args ...)
-                                     (body+ ... body)) . *))
+  ;; generate a new arg for the _ in the head position
+  ((extract-_ final ((_ . rest) (args ...) (body ...)) . *)
+   (extract-_ final (rest (args ... arg) (body ... arg)) . *))
 
-  ((extract-placeholders final ((_ . rest) (args ...) (body ...)) . *)
-   (extract-placeholders final (rest (args ... arg) (body ... arg)) . *))
+  ;; rewrite the term in the head position to the back
+  ;; of the processed terms
+  ((extract-_ final ((term . rest) args (body ...)) . *)
+   (extract-_ final (rest args (body ... term)) . *))
 
-  ((extract-placeholders final ((arg . rest) args (body ...)) . *)
-   (extract-placeholders final (rest args (body ... arg)) . *))
-
+  ;; pop/nest back processed expression
+  ;; ('last' is an atom; most likely (), but can also
+  ;; be some value, e.g. in the case of assoc list literals)
+  ((extract-_ final
+	      (last (args ...) (body ...))
+	      (rest (args+ ...) (body+ ...)) . *)
+   (extract-_ final
+	      (rest (args+ ... args ...)
+		    (body+ ... (body ... . last))) . *))
   )
 
 (define-syntax (identity-syntax form)
   form)
 
 (define-syntax (is . something)
-  (extract-placeholders identity-syntax (something () ())))
+  (extract-_ identity-syntax (something () ())))
 
 (define-syntax (isnt . something)
-  (extract-placeholders not (something () ())))
+  (extract-_ not (something () ())))
 
 (e.g.
  (is 2 < 3))
