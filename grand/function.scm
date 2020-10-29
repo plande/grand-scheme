@@ -120,24 +120,44 @@
      (and (infix/postfix left related-to? right*)
 	  (infix/postfix right* . likewise)))))
 
-(define-syntax extract-_ (_ is isnt)
+(define-syntax extract-_ (_ is isnt quote
+			    quasiquote unquote
+			    unquote-splicing)
   ;; ok, it's a bit rough, so it requires an explanation.
   ;; the macro operates on sequences of triples
-  ;; (<remaining-expr> <arg-list> <processed-expr>) +
+  ;;
+  ;;   (<remaining-expr> <arg-list> <processed-expr>) +
+  ;;
   ;; where <remaining-expr> is being systematically
   ;; rewritten to <processed-expr>. When the _ symbol
   ;; is encountered, it is replaced with a fresh "arg"
   ;; symbol, which is appended to both <arg-list>
-  ;; and <processed-expr> (the goal is to create
-  ;; a lambda where each consecutive _ is treated as a new
-  ;; argument -- unless there are no _s: then we do not
+  ;; and <processed-expr>.
+  ;;
+  ;; The goal is to create a lambda where each
+  ;; consecutive _ is treated as a new argument
+  ;; -- unless there are no _s: then we do not
   ;; create a lambda, but a plain expression.
   ;;
   ;; The nested "is" and "isnt" operators are treated
   ;; specially, in that the _s within those operators are
-  ;; not extracted
+  ;; not extracted.
   ;;
+  ;; Similarly, the _ isn't extracted from quoted forms,
+  ;; and is only extracted from quasi-quoted forms if
+  ;; it appears on unquoted positions.
 
+  ;; The support for quasiquote modifies the tuples
+  ;; to have the form
+  ;;
+  ;;   (<remaining-expr> <arg-list> <processed-expr> . qq*) +
+  ;;
+  ;; where qq* is a sequence of objects that expresses
+  ;; the nesting level of the 'quasiquote' operator
+  ;; (i.e. quasiquote inside quasiquote etc.)
+
+  ;; The macro consists of the following cases:
+  
   ;; final case with no _s
   ((extract-_ final (() () body))
    (final (infix/postfix . body)))
@@ -154,9 +174,38 @@
   ((extract-_ final (((isnt . t) . rest) args (body ...)) . *)
    (extract-_ final (rest args (body ... (isnt . t))) . *))
 
+  ;; same with 'quote'
+  ((extract-_ final (('literal . rest) args (body ...)) . *)
+   (extract-_ final (rest args (body ... 'literal)) . *))
+
+  ;; when 'quasiquote' is encountered, we increase the
+  ;; level of quasiquotation (the length of the qq* sequence)
+  ((extract-_ final
+	      (((quasiquote x) . rest) args body . qq*) . *)
+   (extract-_ final
+	      ((x) () (quasiquote) qq . qq*)
+	      (rest args body) . *))
+
+  ;; on the other hand, for 'unquote' and
+  ;; 'unquote-splicing', we decrease the nesting level
+  ;; (i.e. we consume one element from the qq* sequence)
+  ((extract-_ final
+	      (((unquote x) . rest) args body qq . qq*) . *)
+   (extract-_ final
+	      ((x) () (unquote) . qq*)
+	      (rest args body qq . qq*) . *))
+
+  ((extract-_ final
+	      (((unquote-splicing x) . rest) args body
+	       qq . qq*) . *)
+   (extract-_ final
+	      ((x) () (unquote-splicing) . qq*)
+	      (rest args body qq . qq*) . *))
+  
   ;; push/unnest nested expression for processing
-  ((extract-_ final (((h . t) . rest) args body) . *)
-   (extract-_ final ((h . t) () ()) (rest args body) . *))
+  ((extract-_ final (((h . t) . rest) args body . qq) . *)
+   (extract-_ final ((h . t) () () . qq)
+	      (rest args body . qq) . *))
 
   ;; generate a new arg for the _ in the head position
   ((extract-_ final ((_ . rest) (args ...) (body ...)) . *)
@@ -164,18 +213,18 @@
 
   ;; rewrite the term in the head position to the back
   ;; of the processed terms
-  ((extract-_ final ((term . rest) args (body ...)) . *)
-   (extract-_ final (rest args (body ... term)) . *))
+  ((extract-_ final ((term . rest) args (body ...) . qq) . *)
+   (extract-_ final (rest args (body ... term) . qq) . *))
 
   ;; pop/nest back processed expression
   ;; ('last' is an atom; most likely (), but can also
   ;; be some value, e.g. in the case of assoc list literals)
   ((extract-_ final
-	      (last (args ...) (body ...))
-	      (rest (args+ ...) (body+ ...)) . *)
+	      (last (args ...) (body ...) . qq)
+	      (rest (args+ ...) (body+ ...) . qq+) . *)
    (extract-_ final
 	      (rest (args+ ... args ...)
-		    (body+ ... (body ... . last))) . *))
+		    (body+ ... (body ... . last)) . qq+) . *))
   )
 
 (define-syntax (identity-syntax form)
