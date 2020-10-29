@@ -201,12 +201,18 @@
    (extract-_ final
 	      ((x) () (unquote-splicing) . qq*)
 	      (rest args body qq . qq*) . *))
-  
+
   ;; push/unnest nested expression for processing
   ((extract-_ final (((h . t) . rest) args body . qq) . *)
    (extract-_ final ((h . t) () () . qq)
 	      (rest args body . qq) . *))
 
+  ;; unquote in the tail position
+  ((extract-_ final
+	      ((unquote x) args (body ...) qq . qq*) . *)
+   (extract-_ final
+	      ((x) args (body ... unquote) . qq*) . *))
+  
   ;; generate a new arg for the _ in the head position
   ((extract-_ final ((_ . rest) (args ...) (body ...)) . *)
    (extract-_ final (rest (args ... arg) (body ... arg)) . *))
@@ -215,6 +221,14 @@
   ;; of the processed terms
   ((extract-_ final ((term . rest) args (body ...) . qq) . *)
    (extract-_ final (rest args (body ... term) . qq) . *))
+
+  ;; _ in the tail position
+  ((extract-_ final
+	      (_ (args ...) (body ...) . qq)
+	      (rest (args+ ...) (body+ ...) . qq+) . *)
+   (extract-_ final
+	      (rest (args+ ... args ... arg)
+		    (body+ ... (body ... . arg)) . qq+) . *))
 
   ;; pop/nest back processed expression
   ;; ('last' is an atom; most likely (), but can also
@@ -267,7 +281,21 @@
  ((is 2 _ 3) <))
 
 (e.g.
+ ((isnt 2 _ 3) >=))
+
+(e.g.
  ((is _ _ _) 2 < 3))
 
 (e.g.
  ((is (expt _ 2) _ (expt _ 2) _ (expt _ 2)) 2 <= -2 < -3))
+
+(e.g. ;; a bit contrived, but shows handling of quotations
+ ((is '(_ _) list `(_ ,_ ,@(_ _) `,,_ ,'_)) 5 values '(6 7) 'X)
+ ===> ((_ _) (_ 5 6 7 `,X _)))
+
+(e.g. ;; handling improper lists
+ (is '(x . y) member '((a . b) (p . q) (x . y))))
+
+(e.g.
+ ((is `(p . ,_) member `((a . b) (,_ . q) (x . y)))
+  'q 'p))
