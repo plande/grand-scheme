@@ -22,9 +22,12 @@
   #:use-module (grand reading)
   #:use-module (grand endian)
   #:use-module (grand graph)
+  #:use-module (grand mutable-lambda)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
-	       for collect numbers
+	       for
+	       collect
+	       numbers
 	       pretty-print
 	       print
 	       argmin
@@ -37,7 +40,9 @@
 	       insert
 	       splice
 	       generate-list
-	       with-default without-default specify
+	       with-default
+	       without-default
+	       specify
 	       rest
 	       equivalence-classes
 	       subsets
@@ -156,7 +161,7 @@
 	       attributes-children
 	       remove-attributes
 	       merge-attributes
-	       (define/keywords . define*)
+	       ;;(define/keywords . define*)
 	       read-s-expressions
 	       read-file
 	       read-lines
@@ -185,5 +190,7 @@
 	       (compose/values . compose)
 	       optimal-path
 	       reach
+	       lambda!
+	       (define-lambda! . define!)
 	       )
   )
