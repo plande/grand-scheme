@@ -3,6 +3,7 @@
   #:use-module (srfi srfi-1)
   #:use-module (grand examples)
   #:use-module (grand publishing)
+  #:use-module (grand function)
   #:export (
 	    only
 	    without-first
@@ -118,18 +119,28 @@
  (define (argopt < property element . elements)
    (let next-trial ((champion element)
 		    (mastery (property element))
+                    (champion-index 0)
+                    (rival-index 1)
 		    (opponents elements))
      (if (null? opponents)
-	 (values champion mastery)
+	 (values champion mastery champion-index)
 	 (let* ((rival (first opponents))
 		(challenge (property rival)))
-	   (if (< challenge mastery)
-	       (next-trial rival challenge (rest opponents))
-	       (next-trial champion mastery (rest opponents))))))))
+	   (if (is challenge < mastery)
+	       (next-trial rival
+                           challenge
+                           rival-index
+                           (+ rival-index 1)
+                           (rest opponents))
+	       (next-trial champion
+                           mastery
+                           champion-index
+                           (+ rival-index 1)
+                           (rest opponents))))))))
 
 (e.g.
- (argmin length '(1 2) '(3) '(4 5 6))
- ===> (3))
+ (argmin length '(1 2 3 4) '(5 6 7) '(8 9) '(10))
+ ===> (10) 1 3)
 
 (define (min+max first . args)
   #;(assert (and (number? first)
@@ -163,10 +174,10 @@
 	  (values looser winner)
 	  (let* ((rival (first opponents))
 		 (quality (property rival)))
-	    (cond ((< quality failure)
+	    (cond ((is quality < failure)
 		   (next-trial winner rival mastery quality 
 			       (rest opponents)))
-		  ((> quality mastery)
+		  ((is quality > mastery)
 		   (next-trial rival looser quality failure 
 			       (rest opponents)))
 		  (else
@@ -245,14 +256,14 @@
   (call-with-values (lambda () (apply f seed))
     (lambda result
       (match result
-	(()
+	(`()
 	 '())
 	(_
 	 `(,@seed ,@(apply unfold-left f result)))))))
 
 (e.g.
  (unfold-left (lambda (x)
-		(if (> x 10)
+		(if (is x > 10)
 		    (#;no values)
 		    (+ x 1)))
 	      #;from 0)
@@ -275,7 +286,7 @@
     (call-with-values (lambda () (apply f seed))
       (lambda result
 	(match result
-	  (()
+	  (`()
 	   results)
 	  (_
 	   (apply unfold f #;into `(,@seed ,@results) #;from result))))))
@@ -283,7 +294,7 @@
 
 (e.g.
  (unfold-right (lambda (x)
-		 (if (> x 10)
+		 (if (is x > 10)
 		     (#;no values)
 		     (+ x 1)))
 	       #;from 0)
@@ -298,7 +309,7 @@
 
 (define (unfold-right-upto n #;using f #;starting-with seed)
   (define (unfold n seed result)
-    (if (<= n 0)
+    (if (is n <= 0)
 	result
 	(unfold (- n 1) (f seed) `(,seed . ,result))))
   (unfold n seed '()))
@@ -377,7 +388,7 @@
 
 (define (map-n n fn . lists)
   (define (map-n* lists)
-    (if (any (lambda (l) (< (length l) n)) lists)
+    (if (any (is (length _) < n) lists)
 	(values '() lists)
 	(let* ((heads tails (map/values (lambda (l) (split-at l n)) lists))
 	       (mapped (list<-values (apply fn (concatenate heads))))
@@ -492,7 +503,7 @@
 
 (define (proper-list+dotted-tail improper-list)
   (match improper-list
-    ((prefix . rest)
+    (`(,prefix . ,rest)
      (let ((proper-list tail (proper-list+dotted-tail rest)))
        (values `(,prefix . ,proper-list) tail)))
     (_
