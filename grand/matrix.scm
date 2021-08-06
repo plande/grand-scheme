@@ -2,7 +2,8 @@
   #:use-module (grand syntax)
   #:use-module (grand list)
   #:use-module (grand examples)
-  #:export (matrix? M* M+ det inv dim transpose diag zero matrix-ref matrix-column))
+  #:export (matrix? M* M+ det inv dim transpose diag zero matrix-ref matrix-column
+                    matrix-map scale-matrix))
 
 (define (matrix? x)
   (and (list? x)
@@ -142,6 +143,11 @@
  (det '(( 6  1  1 )
 	( 4 -2  5 )
 	( 2  8  7 ))) ===> -306)
+
+(define (matrix-map f M)
+  (map (lambda (row)
+         (map f row))
+       M))
 
 (define (scale-matrix M #;by factor)
   #;(assert (and (matrix? M)

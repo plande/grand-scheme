@@ -145,7 +145,7 @@
 	       name/source
 	       length. any. every.
 	       (iterations . times)
-	       matrix? M* M+ det inv dim transpose diag
+	       matrix? M* M+ det inv dim transpose diag scale-matrix
 	       zero matrix-ref matrix-column
 	       bind-socket
 	       select-file-descriptors
