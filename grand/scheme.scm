@@ -6,9 +6,7 @@
   #:use-module (grand default-specific)
   #:use-module (grand define-memoized)
   #:use-module (grand define-partial)
-  #:use-module (grand define-keywords)
   #:use-module (grand combinatorics)
-  #:use-module (grand attributes)
   #:use-module (grand set)
   #:use-module (grand list)
   #:use-module (grand function)
@@ -22,7 +20,6 @@
   #:use-module (grand reading)
   #:use-module (grand endian)
   #:use-module (grand graph)
-  #:use-module (grand mutable-lambda)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       for
@@ -146,7 +143,7 @@
 	       let let* lambda define and-let* or
 	       define-syntax let-syntax letrec-syntax
 	       match primitive-lambda
-	       is isnt ;; isn't
+	       is isnt
 	       name/source
 	       length. any. every.
 	       (iterations . times)
@@ -155,13 +152,6 @@
 	       bind-socket
 	       select-file-descriptors
 	       system-times
-	       attribute-ref
-	       attributes?
-	       attributes+children
-	       attributes-children
-	       remove-attributes
-	       merge-attributes
-	       ;;(define/keywords . define*)
 	       read-s-expressions
 	       read-file
 	       read-lines
@@ -190,7 +180,5 @@
 	       (compose/values . compose)
 	       optimal-path
 	       reach
-	       lambda!
-	       (define-lambda! . define!)
 	       )
   )
