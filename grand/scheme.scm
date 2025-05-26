@@ -20,6 +20,7 @@
   #:use-module (grand reading)
   #:use-module (grand endian)
   #:use-module (grand graph)
+  #:use-module (grand mappings)
   #:use-module (ice-9 pretty-print)
   #:re-export (e.g.
 	       for
@@ -180,5 +181,14 @@
 	       (compose/values . compose)
 	       optimal-path
 	       reach
+
+	       mapping
+	       attribute
+	       attribute+
+	       define-mapping
+	       define-attribute
+	       define-attribute+
+	       unset!
+	       keys
 	       )
   )
