@@ -1,5 +1,4 @@
 (define-module (grand loops)
-  #:use-module (grand define-keywords)
   #:use-module (grand function)
   #:use-module (grand examples)
   #:use-module (grand list)
@@ -10,20 +9,51 @@
 ;; Python-style for-loop and list comprehensions
 ;; "make you a python for great bad"
 
-
-
 (define-syntax for
-  (syntax-rules (in =>)
+  (syntax-rules (in from to below by => in-parallel)
     ((for (key => value) in hash-map actions . *)
      (hash-for-each (lambda (key value) actions . *) hash-map))
     
     ((for x in list actions . *)
-     (for-each (lambda (x) actions . *) list))))
+     (for-each (lambda (x) actions . *) list))
 
-(define/keywords (numbers #:from start #:= 0
-			  #:to end
-			  #:by step #:= 1)
-  (let* ((step (* (if (is start > end) -1 1)
+    ((_ var in-parallel collection . actions)
+     (par-for-each (lambda (var) . actions) collection))
+
+    ((_ var from start to end by increment actions ...)
+     (let loop ((var start))
+       (if (<= var end)
+	   (begin
+	     actions ...
+	     (loop (+ var increment))))))
+
+    ((_ var from start below end by increment actions ...)
+     (let loop ((var start))
+       (if (< var end)
+	   (begin
+	     actions ...
+	     (loop (+ var increment))))))
+
+    ((_ var from start to end actions ...)
+     (let loop ((var start))
+       (if (<= var end)
+	   (begin
+	     actions ...
+	     (loop (+ var 1))))))
+
+    ((_ var from start below end actions ...)
+     (let loop ((var start))
+       (if (< var end)
+	   (begin
+	     actions ...
+	     (loop (+ var 1))))))    
+    ))
+
+(define* (numbers #:key (from 0) to (by 1))
+  (let* ((start from)
+	 (end to)
+	 (step by)
+	 (step (* (if (is start > end) -1 1)
 		  (if (positive? step) 1 -1)
 		  step))
 		  
