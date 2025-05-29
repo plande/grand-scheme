@@ -1,5 +1,5 @@
 (define-module (grand syntax)
-  #:use-module (ice-9 match)
+  #:use-module (grand match)
   #:use-module (srfi srfi-1)
   #:use-module (grand examples)
   #:re-export (match)
